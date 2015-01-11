@@ -4,9 +4,8 @@ img = double(imread('/home/vallegro/space/Resources/lena.pgm'));
 im = img;
 im_size = size(im);
 
-load('results/SKResult17');
+load('results/seed');
 
-seed(1:512 , 1:512) = z(:,:,13);
 %seed = seed(197:284,197:284);
 
 
@@ -15,15 +14,15 @@ sigma = 25;        % standard deviation
 randn('state', 0); % initialization
 y_noise = round0_255(im + randn(size(im)) * sigma);
 
-g_kernel = SKheter(y_noise , seed, 8);
+align = 8;
+
+g_kernel = SKHeter(seed, align);
 
 file_name = strcat('g_kernel_',datestr(clock),'.mat');
 save(file_name,'g_kernel');
 
 lambda = 0:0.1:3;
 len = length(lambda);
-
-align = 8;
 
 res0 = zeros([im_size len]);
 res1 = zeros([im_size+align len]);
@@ -34,11 +33,16 @@ psnr2 = zeros(len,1);
 
 for i = 1:len,
     disp(i);
+        
+    res1(1:im_size(1)+align, 1:im_size(2)+align, i)= KGI(y_noise, g_kernel, 8, lambda(i));
     
-    [res0(1:im_size(1), 1:im_size(2), i),...
-     res1(1:im_size(1)+align, 1:im_size(2)+align, i),...
-     res2(1:im_size(1), 1:im_size(2), i)]= KGI(y_noise, g_kernel, 8, lambda(i));
+    res2(1:im_size(1), 1:im_size(2), i) = KGI(y_noise(1+align/2:end-align/2 , 1+align/2:end-align/2),...
+                                              g_kernel(1+align/2:end-align/2 , 1+align/2:end-align/2,:,:),...
+                                              8,lambda(i));
     
+    res0(1:im_size(1), 1:im_size(2), i) = OverLap(res1(1:im_size(1)+align, 1:im_size(2)+align, i),...
+                                                  res2(1:im_size(1), 1:im_size(2), i));                                        
+                                          
     res0i(1:im_size(1), 1:im_size(2)) = uint8(res0(1:im_size(1), 1:im_size(2), i));
     psnr0(i) = CalPSNR(res0i, im);
     
