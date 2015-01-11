@@ -1,4 +1,4 @@
-function [ res0 , res1 , res2 ] = KGI( im, g_kernel, align, lambda_g)
+function [ res0 , res1 , res2 ] = Copy_of_KGI( im, g_kernel, align, lambda_g)
 %KGI Summary of this function goes here
 %   Detailed explanation goes here
 

@@ -30,9 +30,6 @@ pyramid_map = AdaptivePyramid(seed_mirrored);
 levels = lrflip(unique(pyramid_map));    % example output with three levels 254 127 0  
 block_size_l = lrflip(align_min*2.^(1:levels));
 
-KGIAdaptive
 
-pyramid_map = AdaptivePyramid(seed);
-levels = lrflip(unique(pyramid_map));    % example output with three levels 254 127 0  
-block_size_l = lrflip(align_min*2.^(1:levels));
+
 

@@ -16,10 +16,15 @@ y_noise = round0_255(im + randn(size(im)) * sigma);
 
 align = 8;
 
-g_kernel = SKHeter(seed, align);
+seed_mirrored = EdgeMirror(seed , [align/2 , align/2]);
+
+g_kernel = SKHeter(seed_mirrored, align);
 
 file_name = strcat('g_kernel_',datestr(clock),'.mat');
 save(file_name,'g_kernel');
+
+im = EdgeMirror(im, [align/2 , align/2]);
+im_size = size(im);
 
 lambda = 0:0.1:3;
 len = length(lambda);

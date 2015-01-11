@@ -1,8 +1,6 @@
 function [ res ] = KGI( im, g_kernel, align, lambda_g)
 %KGI Summary of this function goes here
 %   Detailed explanation goes here
-
-im = EdgeMirror(im, [align/2 , align/2]);
 im_size = size(im);
 
 ksize = 2*align + 1;
