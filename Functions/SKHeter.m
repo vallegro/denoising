@@ -4,7 +4,7 @@ function[g_kernel] =  SKHeter(im_seed, align)
 %   each pixel of the mirrored image with mirroring width = align/2 
 %   im_seed: seed image to calculate the kernel
 %   mininum block size
-im_seed = EdgeMirror(im_seed , [align/2 , align/2]);
+
 im_size = size(im_seed);
 
 % parameters of pilot estimation by second order classic kernel regression

@@ -39,14 +39,14 @@ psnr2 = zeros(len,1);
 for i = 1:len,
     disp(i);
         
-    res1(1:im_size(1)+align, 1:im_size(2)+align, i)= KGI(y_noise, g_kernel, 8, lambda(i));
+    res1(1:im_size(1)+align, 1:im_size(2)+align, i)= KGI(y_noise, g_kernel, align, lambda(i));
     
     res2(1:im_size(1), 1:im_size(2), i) = KGI(y_noise(1+align/2:end-align/2 , 1+align/2:end-align/2),...
                                               g_kernel(1+align/2:end-align/2 , 1+align/2:end-align/2,:,:),...
-                                              8,lambda(i));
+                                              align,lambda(i));
     
     res0(1:im_size(1), 1:im_size(2), i) = OverLap(res1(1:im_size(1)+align, 1:im_size(2)+align, i),...
-                                                  res2(1:im_size(1), 1:im_size(2), i));                                        
+                                                  res2(1:im_size(1), 1:im_size(2), i), align);                                        
                                           
     res0i(1:im_size(1), 1:im_size(2)) = uint8(res0(1:im_size(1), 1:im_size(2), i));
     psnr0(i) = CalPSNR(res0i, im);

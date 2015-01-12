@@ -11,8 +11,8 @@ function [pyramid_map] = AdaptivePyramid(im)
     
     for i = 1:level_num-1,   %the smallest block size has no need to check 
         block_size = level_bs(i);              
-        for block_i = 1:block_size:im_size(1),
-            for block_j =1:block_size:im_size(2);
+        for block_i = 1:block_size:im_size(1)-block_size+1,
+            for block_j =1:block_size:im_size(2)-block_size+1;
                 if pyramid_map(block_i,block_j) > 0;
                     continue;
                 end                    
