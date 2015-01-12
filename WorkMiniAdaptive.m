@@ -11,7 +11,7 @@ mirror_size = size(seed_mirrored);
 num_level = 3;
 pyramid_map1 = AdaptivePyramid(seed_mirrored , num_level);       
 pyramid_map2 = AdaptivePyramid(seed_mirrored(1+align/2:end-align/2,1+align/2:end-align/2) , num_level); %using num_level=3 
-levels = sort(unique(pyramid_map),'descend');    % example output with three levels 254 127 0  
+levels = sort(unique(pyramid_map1),'descend');    % example output with three levels 254 127 0  
 block_sizes = sort(block_min*2.^(0:num_level-1),'descend'); %example 
 
 res1 = zeros( [mirror_size num_lambda num_level]);
