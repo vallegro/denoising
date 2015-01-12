@@ -9,9 +9,9 @@ g_kernel(:,:,k_rad,k_rad) = 0;
 
 res = zeros(im_size);
 
-for block_i = 1:1:floor(im_size(1)/block_size_l),
+for block_i = 1:block_size_l:im_size(1),
     for block_j = 1:block_size_l:im_size(2),
-        fprintf('%d,%d\n',block_i,block_j);
+        %fprintf('%d,%d\n',block_i,block_j);
         if block_map(block_i, block_j)~=0;
             kernels_in_block = g_kernel(block_i : block_i+block_size_l-1,...
                                         block_j : block_j+block_size_l-1,:,:);
@@ -25,5 +25,9 @@ for block_i = 1:1:floor(im_size(1)/block_size_l),
         end
     end
 end
+
+
+file_name = sprintf('results/part%d_size%d_lambda%.2f.ppm',log2(block_size_l/8),im_size(1),lambda_g);
+imwrite(uint8(res),file_name);
 
 end
