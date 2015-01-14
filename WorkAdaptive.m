@@ -14,7 +14,6 @@ y_noise = round0_255(im + randn(size(im)) * sigma);
 
 align = 8;
 
-
 g_kernel = SKHeter( seed, align );
 %g_kernel = SKHeterAdaptive( seed , 8 , pyramid_map  );
 

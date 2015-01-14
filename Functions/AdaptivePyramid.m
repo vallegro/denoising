@@ -1,6 +1,7 @@
 function [pyramid_map] = AdaptivePyramid(im,level_num )
 % divide the image into blocks with various sizes of blocks
-% and there are no edges in large blocks 
+% and there are no edges in large blocks, and classify the 
+% smallest blocks with or without an edge. 
 
     edge_map = edge(im,'canny');
     im_size = size(im);
