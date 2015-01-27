@@ -1,25 +1,34 @@
-
+%% setup images
+im = double(imread('/home/vallegro/Space/Resources/disp.pgm'));
+img = im;
+im_size = size(im);
 align = 8;
+sigma = 25;        % standard deviation
+randn('state', 0); % initialization
+y_noise = round0_255(im + randn(size(im)) * sigma);
 
-[img, y] = TestImSyn();
-img = double(img); 
-y_noise = double(y);
-y = double(y);
+y = double(y_noise);
 y_noise_mirrored = EdgeMirror(y_noise, [align/2 align/2]);
-
+%% LARK
 LARK;
-
 seed = z(:,:,13);
-
+%% SKHeter
 seed_mirrored = EdgeMirror(seed, [align/2 align/2] );
 mirror_size = size(seed_mirrored);
 
-g_kernel = SKHeter( seed_mirrored, align );
-%g_kernel = SKHeterAdaptive( seed , 8 , pyramid_map  );
+par = gcp();
 
-file_name = strcat('results/g_kernel_',datestr(clock),'.mat');
-save(file_name,'g_kernel');
+num = par.NumWorkers;
+spmd(num)
+    labwidth = ceil((im_size(2)+align)/num);
+    labpiece = seed_mirrored(:,1+(labindex-1)*labwidth : min(labwidth*labindex,im_size(2)));    
+    g_kernel(:,1+(labindex-1)*labwidth : min(labwidth*labindex,im_size(2)),:,:) = ...
+        SKHeter( labpiece, align );
+    
+end
 
+save();
+%% New Model
 block_min = align;
 
 lambda = 0.1:0.1:1.6;

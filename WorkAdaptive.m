@@ -1,5 +1,6 @@
 % load image
-img = double(imread('/home/vallegro/space/Resources/lena.pgm'));
+%img = double(imread('/home/vallegro/space/Resources/lena.pgm'));
+img = double(imread('/home/vallegro/Space/Resources/disp.pgm'));
 %im = img(197:284,197:284);
 im = img;
 
