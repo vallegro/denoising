@@ -1,4 +1,4 @@
-function [ ] = NewModel( y_noise, g_kernel, align, block_size_l, block_map ,lambda_g, edge_map, l_num )
+function [ ] = NewModel( y_noise, g_kernel, align, block_size_l, block_map ,lambda_g, edge_map, l_num, seed_mirrored )
 %LINEARFITTING Summary of this function goes here
 %   Detailed explanation goes here
 im_size = size(y_noise);
@@ -17,8 +17,7 @@ for block_i = 1:block_size_l:im_size(1),
             block = y_noise(block_i : block_i+block_size_l-1,...
                             block_j : block_j+block_size_l-1);
             block_edge = edge_map(block_i : block_i+block_size_l-1,...
-                                  block_j : block_j+block_size_l-1); 
-                                               
+                                  block_j : block_j+block_size_l-1);                                            
             [c1,c2]=meshgrid(1:block_size_l , 1:block_size_l);
             c3 = ones(block_size_l);
             if block_size_l == 8,
@@ -47,7 +46,9 @@ for block_i = 1:block_size_l:im_size(1),
             residual = block - linear_base;
             kernels_in_block = g_kernel(block_i : block_i+block_size_l-1,...
                                          block_j : block_j+block_size_l-1,:,:);
-            graph = BlockGraphFromKernelsEWE(kernels_in_block , block_size_l, ksize);
+            block_seed = seed_mirrored(block_i : block_i+block_size_l-1,...
+                                       block_j : block_j+block_size_l-1);                                                              
+            graph = BlockGraphFromKernelsEWE(kernels_in_block , block_size_l, ksize, block_seed);
             lap = CalLap(graph);
             residual_res = (eye(block_size_l*block_size_l)+lambda_g*lap)^(-1)*residual(:);
             block_res = linear_base + reshape(residual_res, [block_size_l block_size_l]);

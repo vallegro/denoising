@@ -1,9 +1,9 @@
 %% setup images
 im = double(imread('/home/vallegro/Space/Resources/disp.pgm'));
+im = imresize(im,0.5);
 img = im;
-im_size = size(im);
 align = 8;
-sigma = 25;        % standard deviation
+sigma = 15;        % standard deviation
 randn('state', 0); % initialization
 y_noise = round0_255(im + randn(size(im)) * sigma);
 
@@ -15,19 +15,23 @@ seed = z(:,:,13);
 %% SKHeter
 seed_mirrored = EdgeMirror(seed, [align/2 align/2] );
 mirror_size = size(seed_mirrored);
-
+g_kernel_size = [mirror_size, align*2+1,align*2+1];
+g_kernel = zeros(g_kernel_size);
 par = gcp();
 
 num = par.NumWorkers;
 spmd(num)
-    labwidth = ceil((im_size(2)+align)/num);
-    labpiece = seed_mirrored(:,1+(labindex-1)*labwidth : min(labwidth*labindex,im_size(2)));    
+    warning off;
+    labwidth = ceil((mirror_size(2))/num);
+    disp(labwidth);
+    labpiece = seed_mirrored(:,1+(labindex-1)*labwidth : min(labwidth*labindex,(mirror_size(2))));    
     g_kernel(:,1+(labindex-1)*labwidth : min(labwidth*labindex,im_size(2)),:,:) = ...
         SKHeter( labpiece, align );
     
 end
-
+g_kernel = g_kernel{1}+g_kernel{2}+g_kernel{3}+g_kernel{4};
 save();
+
 %% New Model
 block_min = align;
 
@@ -56,15 +60,16 @@ for i_level = 1:num_level,
     
     fprintf('pyramid_level %d\n',i_level);
     
-    for i_lambda = 1:num_lambda,
+    parfor i_lambda = 1:num_lambda,
         
         %res1(1:mirror_size(1) , 1:mirror_size(2) , i_lambda ,i_level) = ...
-        NewModel(y_noise_mirrored, g_kernel, align, block_size_l, pyramid_map_l1 ,lambda(i_lambda),edge_map1);
+        NewModel(y_noise_mirrored, g_kernel, align, block_size_l, pyramid_map_l1 ,lambda(i_lambda),edge_map1,i_level,seed_mirrored);
         
         %res2(1:mirror_size(1)-align , 1:mirror_size(2)-align , i_lambda, i_level) = ...
         NewModel(y_noise_mirrored(1+align/2:end-align/2,1+align/2:end-align/2),...
                         g_kernel(1+align/2:end-align/2,1+align/2:end-align/2,:,:),...
-                        align, block_size_l, pyramid_map_l2, lambda(i_lambda), edge_map2);
+                        align, block_size_l, pyramid_map_l2, lambda(i_lambda), edge_map2,i_level,...
+                        seed_mirrored(1+align/2:end-align/2,1+align/2:end-align/2));
 
         
     end
