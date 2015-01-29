@@ -53,7 +53,7 @@ psnr1 = zeros([num_level num_lambda]);
 psnr2 = zeros([num_level num_lambda]);
 psnr0 = zeros([num_level num_lambda]);
 
-for i_level = 4,
+for i_level = 1:num_level+1,
     pyramid_map_l1 = pyramid_map1==levels(i_level);
     pyramid_map_l2 = pyramid_map2==levels(i_level);
     block_size_l = block_sizes(i_level);
