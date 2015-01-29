@@ -1,40 +1,4 @@
-%% setup images
-im = double(imread('/home/vallegro/Space/Resources/disp.pgm'));
-im = imresize(im,0.5);
-im = round((im/max(max(im)))*255);
-img = im;
-align = 8;
-sigma = 15;        % standard deviation
-randn('state', 0); % initialization
-y_noise = round0_255(im + randn(size(im)) * sigma);
-
-y = double(y_noise);
-y_noise_mirrored = EdgeMirror(y_noise, [align/2 align/2]);
-%% LARK
-LARK;
-seed = z(:,:,13);
-%% SKHeter
-seed_mirrored = EdgeMirror(seed, [align/2 align/2] );
-mirror_size = size(seed_mirrored);
-g_kernel_size = [mirror_size, align*2+1,align*2+1];
-g_kernel_lab = zeros(g_kernel_size);
-par = gcp();
-
-num = par.NumWorkers;
-spmd(num)
-    warning off;
-    labwidth = ceil((mirror_size(2))/num);
-    disp(labwidth*labindex);
-    labpiece = seed_mirrored(1:end,1+(labindex-1)*labwidth : min(labwidth*labindex,(mirror_size(2))));    
-    g_kernel_lab(1:end,1+(labindex-1)*labwidth : min(labwidth*labindex,mirror_size(2)),1:end,1:end) = ...
-        SKHeter( labpiece, align );
-    
-end
-g_kernel = g_kernel_lab{1}+g_kernel_lab{2}+g_kernel_lab{3}+g_kernel_lab{4};
-save();
-
-%% New Model
-block_min = align;
+lock_min = align;
 
 lambda = 0.1:0.1:1.6;
 num_lambda = length(lambda);
@@ -54,7 +18,7 @@ psnr1 = zeros([num_level num_lambda]);
 psnr2 = zeros([num_level num_lambda]);
 psnr0 = zeros([num_level num_lambda]);
 
-for i_level = num_level+1,
+for i_level = 1:num_level+1,
     pyramid_map_l1 = pyramid_map1==levels(i_level);
     pyramid_map_l2 = pyramid_map2==levels(i_level);
     block_size_l = block_sizes(i_level);
