@@ -4,9 +4,9 @@ function[ kernel ] = KernelLoop( y_nei , h_c , r , ksize_c , ...
 %   Detailed explanation goes here
 
 num_anchor_old = -1;
-thres = [40,20,10,5,0];
+thres = [40,10,2];
 i = 1;
-while i <= 5,
+while i <= length(thres),
     
     thre = thres(i);
     [y_nei_sim,sim_pixels] = DistinctPixelRemoval(y_nei, thre);

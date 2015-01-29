@@ -1,4 +1,4 @@
-function [pyramid_map, edge_map] = AdaptivePyramidN(im,level_num )
+function [pyramid_map, edge_map, level_c] = AdaptivePyramidN(im,level_num )
 % divide the image into blocks with various sizes of blocks
 % and there are no edges in large blocks, and classify the 
 % smallest blocks with or without an edge. 
