@@ -1,10 +1,13 @@
 %% setup images
-im = double(imread('/home/vallegro/Space/Resources/disp.pgm'));
-im = imresize(im,0.5);
+im = double(imread('/home/vallegro/Space/Resources/Tom.jpg'));
+im = rgb2gray(uint8(im));
+im = imresize(im , 0.4);
+crop = floor(size(im)/8)*8;
+im = double(im(1:crop(1),1:crop(2)));
 im = round((im/max(max(im)))*255);
 img = im;
 align = 8;
-sigma = 15;        % standard deviation
+sigma = 35;        % standard deviation
 randn('state', 0); % initialization
 y_noise = round0_255(im + randn(size(im)) * sigma);
 
@@ -12,7 +15,8 @@ y = double(y_noise);
 y_noise_mirrored = EdgeMirror(y_noise, [align/2 align/2]);
 %% LARK
 LARK;
-seed = z(:,:,6);
+min_ind = find(rmse ==min(rmse));
+seed = z(:,:,min_ind);
 %% SKHeter
 seed_mirrored = EdgeMirror(seed, [align/2 align/2] );
 mirror_size = size(seed_mirrored);

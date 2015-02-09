@@ -22,8 +22,8 @@ for i =  1:level_num
     ker_lvl1 = repmat(kernel , size1)/max(max(kernel));
     ker_lvl2 = repmat(kernel , size2)/max(max(kernel));
     
-    ker1_tmp(1:size1(1)*blocksize_l , 1:size1(1)*blocksize_l)=ker_lvl1*weights(i);
-    ker2_tmp(1:size2(1)*blocksize_l , 1:size2(1)*blocksize_l)=ker_lvl2*weights(i);
+    ker1_tmp(1:size1(1)*blocksize_l , 1:size1(2)*blocksize_l)=ker_lvl1*weights(i);
+    ker2_tmp(1:size2(1)*blocksize_l , 1:size2(2)*blocksize_l)=ker_lvl2*weights(i);
     
     mask1 = pyra1==levels(i);
     mask2 = pyra2==levels(i);

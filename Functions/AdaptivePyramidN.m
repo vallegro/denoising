@@ -3,7 +3,7 @@ function [pyramid_map, edge_map, level_c] = AdaptivePyramidN(im,level_num )
 % and there are no edges in large blocks, and classify the 
 % smallest blocks with or without an edge. 
 
-    edge_map = edge(im,'canny',0.25);
+    edge_map = edge(im,'canny',0.2);
     im_size = size(im);
     pyramid_map = zeros(im_size);
     level_bs = fliplr(8.*(2.^(0:level_num-1)));

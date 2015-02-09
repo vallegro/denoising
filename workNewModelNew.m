@@ -25,7 +25,7 @@ for i_level = 1:num_level+1,
     
     fprintf('pyramid_level %d\n',i_level);
     
-    for i_lambda = 1:length(lambda),
+    parfor i_lambda = 1:num_lambda,
         
         %res1(1:mirror_size(1) , 1:mirror_size(2) , i_lambda ,i_level) = ...
         NewModel(y_noise_mirrored, g_kernel, align, block_size_l, pyramid_map_l1 ,lambda(i_lambda),edge_map1,i_level,seed_mirrored);
