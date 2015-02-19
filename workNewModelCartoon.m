@@ -1,7 +1,7 @@
 %% setup images
-im = double(imread('/home/vallegro/Space/Resources/Tom.jpg'));
-im = rgb2gray(uint8(im));
-im = imresize(im , 0.4);
+im = double(imread('/home/vallegro/Space/Resources/lena.pgm'));
+%im = rgb2gray(uint8(im));
+im = imresize(im ,1);
 crop = floor(size(im)/8)*8;
 im = double(im(1:crop(1),1:crop(2)));
 im = round((im/max(max(im)))*255);
