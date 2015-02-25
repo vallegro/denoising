@@ -1,10 +1,10 @@
 %% setup images
-im = double(imread('/home/vallegro/Space/Resources/disp.pgm'));
-im = imresize(im,0.5);
-im = round((im/max(max(im)))*255);
+im = double(imread('/home/vallegro/Space/Resources/lena.pgm'));
+%im = imresize(im);
+%im = round((im/max(max(im)))*255);
 img = im;
 align = 8;
-sigma = 15;        % standard deviation
+sigma = 30;        % standard deviation
 randn('state', 0); % initialization
 y_noise = round0_255(im + randn(size(im)) * sigma);
 
@@ -12,7 +12,8 @@ y = double(y_noise);
 y_noise_mirrored = EdgeMirror(y_noise, [align/2 align/2]);
 %% LARK
 LARK;
-seed = z(:,:,6);
+ind = find(rmse == min(rmse));
+seed = z(:,:,ind);
 %% SKHeter
 seed_mirrored = EdgeMirror(seed, [align/2 align/2] );
 mirror_size = size(seed_mirrored);
@@ -41,22 +42,32 @@ num_lambda = length(lambda);
 
 num_level = 3;
 [pyramid_map1, edge_map1, levels] = AdaptivePyramidN(seed_mirrored , num_level);       
-[pyramid_map2, edge_map2, levels] = AdaptivePyramidN(seed_mirrored(1+align/2:end-align/2,1+align/2:end-align/2),...
+
+[pyramid_map2, edge_map2, ~] = AdaptivePyramidN(seed_mirrored(1+align/2:end-align/2,1+align/2:end-align/2),...
                                              num_level); %using num_level=3 
+[pyramid_map3, edge_map3, ~] = AdaptivePyramidN(seed_mirrored(1+align/4:end-align*3/4,1+align/4:end-align*3/4),...
+                                             num_level);
+[pyramid_map4, edge_map4, ~] = AdaptivePyramidN(seed_mirrored(1+align/4:end-align*3/4,1+align*3/4:end-align/4),...
+                                             num_level);
+[pyramid_map5, edge_map5, ~] = AdaptivePyramidN(seed_mirrored(1+align*3/4:end-align/4,1+align/4:end-align*3/4),...
+                                             num_level);                                         
+[pyramid_map6, edge_map6, ~] = AdaptivePyramidN(seed_mirrored(1+align*3/4:end-align/4,1+align*3/4:end-align/4),...
+                                             num_level);                                         
+                                         
+                                         
+                                         
+                                         
 levels = sort((levels),'descend');    % example output with three levels 254 127 0  
 block_sizes = [32,16,8,8]; %example 
-
-res1 = zeros( [mirror_size num_lambda num_level]);
-res2 = zeros( [mirror_size-align num_lambda num_level]);
-res0 = zeros( [mirror_size-align num_lambda num_level]);
-
-psnr1 = zeros([num_level num_lambda]);
-psnr2 = zeros([num_level num_lambda]);
-psnr0 = zeros([num_level num_lambda]);
 
 for i_level = 1:num_level+1,
     pyramid_map_l1 = pyramid_map1==levels(i_level);
     pyramid_map_l2 = pyramid_map2==levels(i_level);
+    pyramid_map_l3 = pyramid_map3==levels(i_level);
+    pyramid_map_l4 = pyramid_map4==levels(i_level);
+    pyramid_map_l5 = pyramid_map5==levels(i_level);
+    pyramid_map_l6 = pyramid_map6==levels(i_level);
+    
     block_size_l = block_sizes(i_level);
     
     fprintf('pyramid_level %d\n',i_level);
@@ -64,14 +75,36 @@ for i_level = 1:num_level+1,
     parfor i_lambda = 1:length(lambda),
         
         %res1(1:mirror_size(1) , 1:mirror_size(2) , i_lambda ,i_level) = ...
-        NewModel(y_noise_mirrored, g_kernel, align, block_size_l, pyramid_map_l1 ,lambda(i_lambda),edge_map1,i_level,seed_mirrored);
+        NewModel(y_noise_mirrored, g_kernel, align, block_size_l, pyramid_map_l1 ,lambda(i_lambda),edge_map1,i_level,seed_mirrored,1);
         
         %res2(1:mirror_size(1)-align , 1:mirror_size(2)-align , i_lambda, i_level) = ...
         NewModel(y_noise_mirrored(1+align/2:end-align/2,1+align/2:end-align/2),...
                         g_kernel(1+align/2:end-align/2,1+align/2:end-align/2,:,:),...
                         align, block_size_l, pyramid_map_l2, lambda(i_lambda), edge_map2,i_level,...
-                        seed_mirrored(1+align/2:end-align/2,1+align/2:end-align/2));
+                        seed_mirrored(1+align/2:end-align/2,1+align/2:end-align/2),2);
 
+
+                    
+        NewModel(y_noise_mirrored(1+align/4:end-align*3/4,1+align/4:end-align*3/4),...
+                        g_kernel(1+align/4:end-align*3/4,1+align/4:end-align*3/4,:,:),...
+                        align, block_size_l, pyramid_map_l3, lambda(i_lambda), edge_map3,i_level,...
+                        seed_mirrored(1+align/4:end-align*3/4,1+align/4:end-align*3/4),3);
+
+        NewModel(y_noise_mirrored(1+align*3/4:end-align/4,1+align/4:end-align*3/4),...
+                        g_kernel(1+align*3/4:end-align/4,1+align/4:end-align*3/4,:,:),...
+                        align, block_size_l, pyramid_map_l4, lambda(i_lambda), edge_map4,i_level,...
+                        seed_mirrored(1+align*3/4:end-align/4,1+align/4:end-align*3/4),4);
+                                        
+        NewModel(y_noise_mirrored(1+align/4:end-align*3/4,1+align*3/4:end-align/4),...
+                        g_kernel(1+align/4:end-align*3/4,1+align*3/4:end-align/4,:,:),...
+                        align, block_size_l, pyramid_map_l5, lambda(i_lambda), edge_map5,i_level,...
+                        seed_mirrored(1+align/4:end-align*3/4,1+align*3/4:end-align/4),5);
+                    
+        NewModel(y_noise_mirrored(1+align*3/4:end-align/4,1+align*3/4:end-align/4),...
+                        g_kernel(1+align*3/4:end-align/4,1+align*3/4:end-align/4,:,:),...
+                        align, block_size_l, pyramid_map_l6, lambda(i_lambda), edge_map6,i_level,...
+                        seed_mirrored(1+align*3/4:end-align/4,1+align*3/4:end-align/4),6);
+                       
         
     end
 end

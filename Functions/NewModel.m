@@ -1,4 +1,4 @@
-function [ ] = NewModel( y_noise, g_kernel, align, block_size_l, block_map ,lambda_g, edge_map, l_num, seed_mirrored )
+function [ ] = NewModel( y_noise, g_kernel, align, block_size_l, block_map ,lambda_g, edge_map, l_num, seed_mirrored,num  )
 %LINEARFITTING Summary of this function goes here
 %   Detailed explanation goes here
 im_size = size(y_noise);
@@ -65,11 +65,11 @@ end
 
 
 
-file_name = sprintf('results/Npart%d_size%d_lambda%.2f.pgm',l_num,im_size(1),lambda_g);
+file_name = sprintf('results/Npart%d_num%d_lambda%.2f.pgm',l_num,num,lambda_g);
 imwrite(uint8(res),file_name);
 
 
-file_name = sprintf('results/Lpart%d_size%d_lambda%.2f.pgm',l_num,im_size(1),lambda_g);
+file_name = sprintf('results/Lpart%d_num%d_lambda%.2f.pgm',l_num,num,lambda_g);
 imwrite(uint8(resL),file_name);
 
 end
