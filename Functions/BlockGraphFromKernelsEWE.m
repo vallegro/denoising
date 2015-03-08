@@ -35,7 +35,7 @@ function [ graph ] = BlockGraphFromKernelsEWE( kernels_in_block , block_size, k_
         end
     end
     %end of outter loop
-
+    graph =graph+0.00001;
 end
 
 

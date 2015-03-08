@@ -1,9 +1,10 @@
-res1 = zeros(264,264);
-res2 = zeros(256,256);
-res3 = zeros(256,256);
-res4 = zeros(256,256);
-res5 = zeros(256,256);
-res6 = zeros(256,256);
+a = 192; b=256;
+res1 = zeros(a+8,b+8);
+res2 = zeros(a,b);
+res3 = zeros(a,b);
+res4 = zeros(a,b);
+res5 = zeros(a,b);
+res6 = zeros(a,b);
 
 
 
@@ -106,7 +107,8 @@ for i_level = 1:length(levels);
     end
 end
 
-res6 = OverLap6(res1,res2,res3,res4,res5,res6,pyramid_map1,pyramid_map2,pyramid_map3,pyramid_map4,pyramid_map5,pyramid_map6)
+resab = OverLapAB(res1,res2,pyramid_map1,pyramid_map2,4,[32,16,8,8]);
+resf6 = OverLap6(res1,res2,res3,res4,res5,res6,pyramid_map1,pyramid_map2,pyramid_map3,pyramid_map4,pyramid_map5,pyramid_map6)
 
 
 

@@ -20,7 +20,7 @@ ker2_tmp = zeros(imsize2);
 
 levels = sort(unique(pyra1),'descend');
 
-weights= [0.4,0.6,0.8,1];
+weights= [1,1.1,1.3,2];
 
 for i =  1:level_num,
 

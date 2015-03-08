@@ -1,4 +1,4 @@
-function [ ] = NewModel( y_noise, g_kernel, align, block_size_l, block_map ,lambda_g, edge_map, l_num, seed_mirrored,num  )
+function [ ] = NewModelInter( y_noise, I, g_kernel, align, block_size_l, block_map ,lambda_g, edge_map, l_num, seed_mirrored,num  )
 %LINEARFITTING Summary of this function goes here
 %   Detailed explanation goes here
 im_size = size(y_noise);
@@ -18,9 +18,12 @@ for block_i = 1:block_size_l:im_size(1),
                             block_j : block_j+block_size_l-1);
             block_edge = edge_map(block_i : block_i+block_size_l-1,...
                                   block_j : block_j+block_size_l-1);                                            
+            block_I = I(block_i : block_i+block_size_l-1,...
+                        block_j : block_j+block_size_l-1);
+                              
             [c1,c2]=meshgrid(1:block_size_l , 1:block_size_l);
             c3 = ones(block_size_l);
-            if block_size_l == 8,
+            if block_size_l <=16,
                 cluster_num =2;
                 disp(cluster_num);
                 linear_base = zeros(block_size_l);
@@ -28,8 +31,8 @@ for block_i = 1:block_size_l:im_size(1),
                 cluster_num =1;
                 disp(cluster_num);
                     
-                C = [c1(:) c2(:) c3(:)] ;
-                d = block(:);
+                C = [c1(:).*block_I(:) c2(:).*block_I(:) c3(:).*block_I(:)] ;
+                d = block(:).*block_I(:);
                 try 
                     X = lsqlin(C,d,[],[]);
                 catch err
@@ -50,9 +53,9 @@ for block_i = 1:block_size_l:im_size(1),
                                        block_j : block_j+block_size_l-1);                                                              
             graph = BlockGraphFromKernelsEWE(kernels_in_block , block_size_l, ksize, block_seed);
             lap = CalLap(graph);
-            residual_res = (eye(block_size_l*block_size_l)+lambda_g*lap)^(-1)*residual(:);
+            residual_res = (diag(block_I(:))+lambda_g*lap)^(-1)*(residual(:).*block_I(:));
             block_res = linear_base + reshape(residual_res, [block_size_l block_size_l]);
-            disp(sum(residual_res));
+            
             res(block_i : block_i+block_size_l-1,...
                 block_j : block_j+block_size_l-1) = block_res;           
             
